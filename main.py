@@ -1,4 +1,4 @@
-import data_loader as dl
+import src.data_loader as dl
 
 START_DATE, END_DATE = dl.get_dates()
 STOCK_1 = "KO"
