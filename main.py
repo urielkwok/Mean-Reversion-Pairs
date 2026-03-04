@@ -1,4 +1,8 @@
 import data_loader as dl
 
-stock_df = dl.get_data("KO", "PEP", "2024-01-01", "2026-01-01")
+START_DATE, END_DATE = dl.get_dates()
+STOCK_1 = "KO"
+STOCK_2 = "PEP"
+
+stock_df = dl.get_data(STOCK_1, STOCK_2, START_DATE, END_DATE)
 print(stock_df)
