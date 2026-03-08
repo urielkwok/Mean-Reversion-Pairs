@@ -14,7 +14,7 @@ def adf_test(series: np.NDArray) -> bool:
         return True
     else:
         return False
- 
+
 
 def OLS_regression(ind_stock: np.NDArray, dep_stock: np.NDArray) -> tuple[float, float]:
     """
@@ -24,9 +24,9 @@ def OLS_regression(ind_stock: np.NDArray, dep_stock: np.NDArray) -> tuple[float,
     """
     x = sm.add_constant(ind_stock)
     y = dep_stock
-    regression = sm.OLS(x, y).fit()
-    alpha = regression.params[0]
-    beta = regression.params[1]
+    regression = sm.OLS(y, x).fit()
+    alpha = regression.params.iloc[0]
+    beta = regression.params.iloc[1]
     return alpha, beta
 
 
