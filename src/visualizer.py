@@ -1,7 +1,13 @@
 import matplotlib.pyplot as plt
+import pandas as pd
 
 
-def plot_z_values(z_values):
+def plot_z_values(z_values: pd.Series) -> None:
+    """
+    Requires: Nothing
+    Modifies: Nothing
+    Effects: Plot of z-values vs time
+    """
     plt.figure(figsize=(8,5))
     plt.plot(z_values)
     plt.xlabel("Time")
