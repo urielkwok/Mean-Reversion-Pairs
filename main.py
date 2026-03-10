@@ -17,8 +17,8 @@ if stationary is True:
     z_scores = an.rolling_z_score(stock_df["spread"], ROLLING_WINDOW)
     stock_df["z-score"] = z_scores
     bt.get_positions(stock_df)
-    stock_df["cumulative_returns"] = bt.cumulative_returns(stock_df["spread"], stock_df["position"])
-    stock_df["cumulative_SPY"] = bt.cumulative_returns(stock_df["SPY"], stock_df["spy_position"])
+    stock_df["cumulative_returns"] = bt.cumulative_returns(stock_df["spread"], stock_df["position"], stock_df[STOCK_2] + (beta * stock_df[STOCK_1]))
+    stock_df["cumulative_SPY"] = bt.cumulative_returns(stock_df["SPY"], stock_df["spy_position"], stock_df["SPY"])
     vz.plot_values(stock_df)
 else:
     print("Spread is not stationary.")
