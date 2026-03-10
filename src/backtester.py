@@ -16,7 +16,7 @@ def get_positions(stock_df: pd.DataFrame) -> None:
     stock_df["spy_position"] = 1
 
 
-def cumulative_returns(values: pd.Series, position: pd.Series, capital: pd.Series) -> pd.Series:
+def cumulative_returns(values: pd.Series, position: pd.Series, investment: pd.Series) -> pd.Series:
     """
     Requires: Values and position are columns in stock_df
     Modifies: Nothing
@@ -24,6 +24,18 @@ def cumulative_returns(values: pd.Series, position: pd.Series, capital: pd.Serie
     """
     change = values.diff()
     PnL = position.shift(1) * change
-    returns = PnL / capital.ffill()
+    returns = PnL / investment.ffill()
     returns = returns.fillna(0)
-    return (1 + returns).cumprod() - 1
+    cumulative_returns = (1 + returns).cumprod() - 1
+    return cumulative_returns
+
+
+def get_measurements(cumulative_returns: pd.Series):
+    """
+    Requires: Nothing
+    Modifies: Nothing
+    Effects: Calculates sharpe ratio using cumulative_returns.
+    """
+    daily_returns = cumulative_returns.diff().fillna(0)
+    sharpe_ratio = (daily_returns.mean() / daily_returns.std()) * (252 ** 0.5)
+    print(f"sharpe ratio: {sharpe_ratio}")
