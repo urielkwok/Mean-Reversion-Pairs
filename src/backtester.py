@@ -38,4 +38,14 @@ def get_measurements(cumulative_returns: pd.Series):
     """
     daily_returns = cumulative_returns.diff().fillna(0)
     sharpe_ratio = (daily_returns.mean() / daily_returns.std()) * (252 ** 0.5)
-    print(f"sharpe ratio: {sharpe_ratio}")
+    print(f"sharpe ratio: {sharpe_ratio:.4f}")
+    total_returns = cumulative_returns.iloc[-1]
+    days = cumulative_returns.shape[0]
+    years = days / 252
+    annual_returns = (1 + total_returns) ** (1 / years) - 1
+    print(f"annualized returns: {annual_returns:.4f}")
+    wealth_index = cumulative_returns + 1
+    previous_peak = wealth_index.cummax()
+    drawdowns = (wealth_index - previous_peak) / previous_peak
+    max_drawdown = drawdowns.min()
+    print(f"max drawdown: {max_drawdown:.2%}")
