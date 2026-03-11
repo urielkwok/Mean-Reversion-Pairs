@@ -22,11 +22,14 @@ def cumulative_returns(values: pd.Series, position: pd.Series, investment: pd.Se
     Modifies: Nothing
     Effects: Calculates total returns
     """
+    commission_cost = 0.0005
     change = values.diff()
     PnL = position.shift(1) * change
     returns = PnL / investment.ffill()
     returns = returns.fillna(0)
     returns = returns[rolling_window:]
+    trade_made = position.diff() != 0
+    returns.loc[trade_made] = returns.loc[trade_made] - commission_cost
     cumulative_returns = (1 + returns).cumprod() - 1
     return cumulative_returns
 
@@ -45,7 +48,7 @@ def get_measurements(cumulative_returns: pd.Series, rolling_window: int) -> None
     days = cumulative_returns.shape[0]
     years = days / 252
     annual_returns = (1 + total_returns) ** (1 / years) - 1
-    print(f"annualized returns: {annual_returns:.4f}")
+    print(f"annualized returns: {annual_returns:.2%}")
     wealth_index = cumulative_returns + 1
     previous_peak = wealth_index.cummax()
     drawdowns = (wealth_index - previous_peak) / previous_peak
