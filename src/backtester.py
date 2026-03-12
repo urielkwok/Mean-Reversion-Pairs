@@ -16,7 +16,7 @@ def get_positions(stock_df: pd.DataFrame) -> None:
     stock_df["spy_position"] = 1
 
 
-def cumulative_returns(values: pd.Series, position: pd.Series, investment: pd.Series, rolling_window: int) -> pd.Series:
+def cum_returns(values: pd.Series, position: pd.Series, investment: pd.Series, rolling_window: int) -> pd.Series:
     """
     Requires: Values and position are columns in stock_df
     Modifies: Nothing

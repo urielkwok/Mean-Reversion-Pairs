@@ -26,7 +26,7 @@ def get_data(stock_1: str, stock_2: str, start_date: str, end_date: str) -> pd.D
     Modifies: Nothing
     Effects: Returns a DataFrame containing price data.
     """
-    stock_df = yf.download([stock_1, stock_2, "SPY"], start_date, end_date)
-    stock_df = stock_df["Close"].copy()
-    stock_df = stock_df.dropna()
-    return stock_df
+    df = yf.download([stock_1, stock_2, "SPY"], start_date, end_date)
+    df = df["Close"].copy()
+    df = df.dropna()
+    return df

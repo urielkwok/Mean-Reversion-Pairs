@@ -6,20 +6,21 @@ import src.backtester as bt
 START_DATE, END_DATE = dl.get_dates()
 STOCK_1 = "GRAB"
 STOCK_2 = "DASH"
-ROLLING_WINDOW = 30
+WINDOW = 30
 
-stock_df = dl.get_data(STOCK_1, STOCK_2, START_DATE, END_DATE)
-alpha, beta = an.OLS_regression(stock_df[STOCK_1], stock_df[STOCK_2])
-stock_df["spread"] = stock_df[STOCK_2] - (alpha + beta * stock_df[STOCK_1])
-stationary = an.adf_test(stock_df["spread"])
+df = dl.get_data(STOCK_1, STOCK_2, START_DATE, END_DATE)
+rolling_beta = an.rolling_OLS(df[STOCK_1], df[STOCK_2], WINDOW)
+df["spread"] = df[STOCK_2] - (rolling_beta * df[STOCK_1])
+stationary = an.adf_test(df[STOCK_1], df[STOCK_2])
 if stationary is True:
     print("Spread is stationary")
-    z_scores = an.rolling_z_score(stock_df["spread"], ROLLING_WINDOW)
-    stock_df["z-score"] = z_scores
-    bt.get_positions(stock_df)
-    stock_df["cumulative_returns"] = bt.cumulative_returns(stock_df["spread"], stock_df["position"], stock_df[STOCK_2] + (beta * stock_df[STOCK_1]), ROLLING_WINDOW)
-    stock_df["cumulative_SPY"] = bt.cumulative_returns(stock_df["SPY"], stock_df["spy_position"], stock_df["SPY"], ROLLING_WINDOW)
-    vz.plot_values(stock_df)
-    bt.get_measurements(stock_df["cumulative_returns"], ROLLING_WINDOW)
+    z_scores = an.rolling_z_score(df["spread"], WINDOW)
+    df["z-score"] = z_scores
+    bt.get_positions(df)
+    investment_price = df[STOCK_2] + (rolling_beta * df[STOCK_1])
+    df["cum_returns"] = bt.cum_returns(df["spread"], df["position"], investment_price, WINDOW)
+    df["cum_SPY"] = bt.cum_returns(df["SPY"], df["spy_position"], df["SPY"], WINDOW)
+    vz.plot_values(df)
+    bt.get_measurements(df["cum_returns"], WINDOW)
 else:
     print("Spread is not stationary.")
