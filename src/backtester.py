@@ -16,22 +16,22 @@ def get_positions(stock_df: pd.DataFrame) -> None:
     stock_df["spy_position"] = 1
 
 
-def cum_returns(values: pd.Series, position: pd.Series, investment: pd.Series, rolling_window: int) -> pd.Series:
+def cum_returns(df: pd.DataFrame, stock_1: str, stock_2: str, beta: pd.Series, WINDOW: int) -> pd.Series:
     """
     Requires: Values and position are columns in stock_df
     Modifies: Nothing
     Effects: Calculates total returns
     """
     commission_cost = 0.0005
-    change = values.diff()
-    PnL = position.shift(1) * change
-    returns = PnL / investment.ffill()
-    returns = returns.fillna(0)
-    returns = returns[rolling_window:]
-    trade_made = position.diff() != 0
-    returns.loc[trade_made] = returns.loc[trade_made] - commission_cost
-    cumulative_returns = (1 + returns).cumprod() - 1
-    return cumulative_returns
+    s1_change = df[stock_1].diff()
+    s2_change = df[stock_2].diff()
+    pnl = df["position"].shift(1) * (s2_change - beta.shift(1) * s1_change)
+    capital_required = df[stock_2] + (beta.abs() * df[stock_1])
+    daily_returns = (pnl / capital_required).fillna(0)
+    trade_made = df["position"].diff().fillna(0) != 0
+    daily_returns.loc[trade_made] -= commission_cost
+    daily_returns = daily_returns[WINDOW:]
+    return daily_returns.cumsum()
 
 
 def get_measurements(cumulative_returns: pd.Series, rolling_window: int) -> None:
@@ -47,7 +47,7 @@ def get_measurements(cumulative_returns: pd.Series, rolling_window: int) -> None
     total_returns = cumulative_returns.iloc[-1]
     days = cumulative_returns.shape[0]
     years = days / 252
-    annual_returns = (1 + total_returns) ** (1 / years) - 1
+    annual_returns = total_returns / years
     print(f"annualized returns: {annual_returns:.2%}")
     wealth_index = cumulative_returns + 1
     previous_peak = wealth_index.cummax()

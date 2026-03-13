@@ -16,15 +16,13 @@ def OLS_regression(ind_stock: pd.Series, dep_stock: pd.Series) -> tuple[float, f
     return alpha, beta
 
 
-def adf_test(stock_1: pd.Series, stock_2: pd.Series) -> bool:
+def adf_test(spread: pd.Series) -> bool:
     """
     Requires: Nothing
     Modifies: Nothing
     Effects: True if series is stationary, False otherwise
     """
-    alpha, beta = OLS_regression(stock_1, stock_2)
-    spread = stock_1 - (alpha + beta * stock_2)
-    result = sm.adfuller(spread)
+    result = sm.adfuller(spread.dropna())
     print(f"Raw ADF: {result[0]:.4f}, p-value: {result[1]:.4f}")
     if result[1] < 0.1:
         return True
@@ -39,7 +37,7 @@ def rolling_beta(df: pd.DataFrame, stock_1: str, stock_2: str, window) -> pd.Ser
     Effects: Calculates a rolling beta
     """
     rolling_cov = df[stock_1].rolling(window).cov(df[stock_2])
-    rolling_var = df[stock_2].rolling(window).var()
+    rolling_var = df[stock_1].rolling(window).var()
     rolling_beta = rolling_cov / rolling_var
     return rolling_beta
 

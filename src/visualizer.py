@@ -9,8 +9,8 @@ def plot_values(df: pd.DataFrame) -> None:
     Effects: Plot z-score and returns vs time
     """
     z_values = df["z-score"].dropna()
-    returns = df["cumulative_returns"].dropna()
-    spy_returns = df["cumulative_SPY"].dropna()
+    returns = df["cum_returns"].dropna()
+    spy_returns = df["cum_SPY"].dropna()
     figure, axes = plt.subplots(2, 1)
     axes[0].plot(z_values)
     axes[0].set_title("Z-Values vs Time")
