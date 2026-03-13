@@ -32,13 +32,15 @@ def adf_test(stock_1: pd.Series, stock_2: pd.Series) -> bool:
         return False
 
 
-def rolling_OLS(stock_1: pd.Series, stock_2: pd.Series, window) -> pd.Series:
+def rolling_beta(df: pd.DataFrame, stock_1: str, stock_2: str, window) -> pd.Series:
     """
     Requires: Both series contain rolling stock data
     Modifies: Nothing
     Effects: Calculates a rolling beta
     """
-    
+    rolling_cov = df[stock_1].rolling(window).cov(df[stock_2])
+    rolling_var = df[stock_2].rolling(window).var()
+    rolling_beta = rolling_cov / rolling_var
     return rolling_beta
 
 

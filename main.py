@@ -4,12 +4,12 @@ import src.visualizer as vz
 import src.backtester as bt
 
 START_DATE, END_DATE = dl.get_dates()
-STOCK_1 = "GRAB"
-STOCK_2 = "DASH"
+STOCK_1 = "DASH"
+STOCK_2 = "GRAB"
 WINDOW = 30
 
 df = dl.get_data(STOCK_1, STOCK_2, START_DATE, END_DATE)
-rolling_beta = an.rolling_OLS(df[STOCK_1], df[STOCK_2], WINDOW)
+rolling_beta = an.rolling_beta(df, STOCK_1, STOCK_2, WINDOW)
 df["spread"] = df[STOCK_2] - (rolling_beta * df[STOCK_1])
 stationary = an.adf_test(df[STOCK_1], df[STOCK_2])
 if stationary is True:
